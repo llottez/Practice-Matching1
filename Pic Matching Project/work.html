@@ -1,0 +1,105 @@
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <title>workXDD</title>
+</head>
+<body>
+  <div id="app">
+    <v-app>
+      <v-main class='deep-purple lighten-2'>
+        <v-container>
+            <v-card>
+                <v-card-title class='indigo lighten-3'>
+                    {{title}}
+                </v-card-title>
+                <v-card-text class='pa-6 text-center' >
+<template v-if="state==0">
+    <v-btn @click="suffer()">เริ่มเล่น</v-btn>
+</template>
+<template v-if="state==1">
+    <v-row>
+        <v-col cols="3" v-for="(c,i) of cards">
+            <img v-if="c.s==0" src="PIC\good tako.png" width="80" length="80" @click="imgclick(c)">
+            <img v-if="c.s==1" :src=" 'PIC/' + c.t + '.jpg'" width="80" length="80">
+        </v-col>
+    </v-row>
+    <v-btn @click="state=0">เลิกเล่น</v-btn>
+</template>
+<template v-if="state==2">
+    <h1 class='pa-6'>Well played!!</h1>
+    <v-btn @click="state=0">ตกลง</v-btn>
+</template>
+                </v-card-text>
+                <v-bottom-navigation class='pa-6 '>
+                    {{footer}}
+                </v-bottom-navigation>
+            </v-card>
+        </v-container>
+      </v-main>
+    </v-app>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        title : "My game by VueJS",
+        footer : "IDIOT",
+        state : 0,
+        cards : [],
+        cards_opened : [],
+        cards_count : 0,
+      },
+      vuetify: new Vuetify(),
+      methods : {
+          suffer(){
+              this.state = 1;
+              this.cards=[];
+              for(var i=1;i<=8;i++){
+                this.cards.push({t:i,s:0});
+                this.cards.push({t:i,s:0});
+                this.cards_count+=2;
+              }
+              for(var j=0;j<100;j++){
+                  var a=Math.round(Math.random()*15);
+                  var b=Math.round(Math.random()*15);
+                  var t=this.cards[a];
+                  this.cards[a]=this.cards[b];
+                  this.cards[b]=t;
+              }
+          },
+          imgclick(c){
+            if(this.cards_opened.length<2){
+            c.s=1;
+            this.cards_opened.push(c);}
+            if(this.cards_opened.length==2){
+              setTimeout(this.checkcard, 1000);
+            }
+          },
+          checkcard(){
+            var a=this.cards_opened[0];
+            var b=this.cards_opened[1];
+            this.cards_opened=[];
+            if(a.t==b.t){
+              a.s=2;
+              b.s=2;
+              this.cards_count -=2;
+            }
+            else{
+              a.s=0;
+              b.s=0;
+            }
+            if(this.cards_count==0){
+              this.state = 2;
+            }
+          }
+      }
+    })
+  </script>
+</body>
+</html>
